@@ -1,10 +1,11 @@
-use tokio_pub_sub::{MultiPublisher, Publisher, Result, SimplePublisher, SimpleSubscriber};
+use tokio_pub_sub::{Result, SimplePublisher, SimpleSubscriber};
+use tokio_pub_sub_macros::DerivePublisher;
 
-// TODO: update DerivePublisher macro to support this use case
-// TODO: update DerivePublisher macro to allow to indicate concrete publisher with a macro attribute
-
+#[derive(DerivePublisher)]
 struct MultiPub {
+    #[publisher(i32)]
     publisher_a: SimplePublisher<i32>,
+    #[publisher(String)]
     publisher_b: SimplePublisher<String>,
 }
 
@@ -14,26 +15,6 @@ impl MultiPub {
             publisher_a: SimplePublisher::new("publisher", 1),
             publisher_b: SimplePublisher::new("publisher", 1),
         }
-    }
-}
-
-impl MultiPublisher<i32> for MultiPub {
-    fn get_publisher(&self) -> &impl Publisher<Message = i32> {
-        &self.publisher_a
-    }
-
-    fn get_publisher_mut(&mut self) -> &mut impl Publisher<Message = i32> {
-        &mut self.publisher_a
-    }
-}
-
-impl MultiPublisher<String> for MultiPub {
-    fn get_publisher(&self) -> &impl Publisher<Message = String> {
-        &self.publisher_b
-    }
-
-    fn get_publisher_mut(&mut self) -> &mut impl Publisher<Message = String> {
-        &mut self.publisher_b
     }
 }
 
